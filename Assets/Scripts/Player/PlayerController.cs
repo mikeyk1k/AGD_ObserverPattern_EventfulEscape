@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class PlayerController
 {
@@ -27,6 +28,8 @@ public class PlayerController
         this.playerScriptableObject.KeysEquipped = 0;
 
         playerState = PlayerState.InDark;
+
+        LightSwitchView.OnLightSwitchToggled += LightSwitchToggled;
     }
 
     public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) ? true : (Input.GetKeyUp(KeyCode.E) ? false : IsInteracted);
@@ -72,5 +75,11 @@ public class PlayerController
 
         rotation = playerRigidbody.rotation * Quaternion.Euler(lookRotation);
         position = (transform.position) + (velocity * movement) * Time.fixedDeltaTime;
+    }
+
+    private void LightSwitchToggled()
+    {
+        if (PlayerState == PlayerState.Dead) return;
+        this.playerState = PlayerState == PlayerState.InDark ? PlayerState.None : PlayerState.InDark;
     }
 }
